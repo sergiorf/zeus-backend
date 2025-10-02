@@ -1,0 +1,2 @@
+[console_scripts]
+zeus = zeus_backend.cli:app

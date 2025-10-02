@@ -1,0 +1,41 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "zeus-backend"
+version = "0.1.1"
+description = "Offline ETL prototype for Brazilian CNPJ firmographics and CVM financials"
+readme = "README.md"
+requires-python = ">=3.10"
+
+# You can add your author info here if you want
+authors = [
+  { name = "Sergio Rodriguez" }
+]
+
+dependencies = [
+  "typer>=0.12",
+  "pandas>=2.2",
+  "pyarrow>=17.0",
+  "duckdb>=1.0",
+  "pydantic>=2.8",
+  "python-dotenv>=1.0",
+  "tqdm>=4.66",
+  "lxml>=5.2",
+  "beautifulsoup4>=4.12",
+]
+
+[project.scripts]
+# This creates the CLI entrypoint
+zeus = "zeus_backend.cli:app"
+
+[tool.setuptools]
+package-dir = {"" = "src"}
+
+[tool.setuptools.packages.find]
+where = ["src"]
+include = ["zeus_backend*"]
+
+[tool.setuptools.exclude-package-data]
+"*" = ["data/*", "tests/*"]
