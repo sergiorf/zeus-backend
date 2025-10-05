@@ -18,24 +18,29 @@ robust data‑engineering pattern: `raw → bronze → silver → gold`.
 
 ## Quick start
 ```bash
-# 1) Create virtualenv & install
+# 1) Create and populate the virtualenv
 make setup
 
 # 2) (Optional) Pull fresh raw data with the bundled downloader
-#    .venv/bin/zeus download cnpj --month 2025-09 -n 1
-#    .venv/bin/zeus download cvm --doc itr -n 1
-#    # Files land in data/raw/cnpj and data/raw/cvm respectively
-# 3) Or drop your own source files in:
-#    data/raw/cnpj/   (Receita CNPJ files)
-#    data/raw/cvm/    (CVM ITR/DFP zips/XBRL)
-# 4) Run the pipeline stages
+.venv/bin/zeus download cnpj --month 2025-09 -n 1
+.venv/bin/zeus download cvm --doc itr -n 1
+
+#    (Files land in data/raw/cnpj and data/raw/cvm respectively.)
+
+# 3) Run the pipeline stages
 make bronze    # discover & unpack to bronze
 make silver    # clean & normalize to silver
 make load      # load into SQLite
 
-# Check the DB
+# 4) Inspect the generated warehouse
 sqlite3 data/warehouse.sqlite ".schema"
 ```
+
+Prefer to supply your own raw files instead of downloading? Drop them in the expected
+folders so the pipeline can discover them:
+
+- `data/raw/cnpj/` — Receita Federal CNPJ ZIP files.
+- `data/raw/cvm/` — CVM ITR or DFP ZIPs (XBRL can be extracted alongside).
 
 ## CLI
 This repo exposes a Typer CLI:
