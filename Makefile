@@ -1,24 +1,25 @@
 .PHONY: setup bronze silver load gold all clean
 
-    setup:
-	python -m venv .venv && . .venv/bin/activate && pip install -e .
+setup:
+	python -m venv .venv
+	.venv/bin/pip install -e .
 
-    bronze:
-	zeus ingest cnpj --to bronze
-	zeus ingest cvm --to bronze
+bronze:
+	.venv/bin/zeus ingest cnpj --to bronze
+	.venv/bin/zeus ingest cvm --to bronze
 
-    silver:
-	zeus normalize cnpj
-	zeus normalize cvm
+silver:
+	.venv/bin/zeus normalize cnpj
+	.venv/bin/zeus normalize cvm
 
-    load:
-	zeus load sqlite
+load:
+	.venv/bin/zeus load sqlite
 
-    gold:
-	zeus build gold
+gold:
+	.venv/bin/zeus build gold
 
-    all: bronze silver load gold
+all: bronze silver load gold
 
-    clean:
+clean:
 	rm -f data/warehouse.sqlite
 	rm -rf data/bronze data/silver data/gold

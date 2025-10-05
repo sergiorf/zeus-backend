@@ -3,6 +3,9 @@
 __pycache__/
 *.pyc
 
+# Packaging metadata
+*.egg-info/
+
 # Raw & processed data
 data/raw/
 data/bronze/

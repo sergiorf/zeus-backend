@@ -24,6 +24,7 @@ dependencies = [
   "tqdm>=4.66",
   "lxml>=5.2",
   "beautifulsoup4>=4.12",
+  "requests>=2.31",
 ]
 
 [project.scripts]

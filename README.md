@@ -21,10 +21,14 @@ robust data‑engineering pattern: `raw → bronze → silver → gold`.
 # 1) Create virtualenv & install
 make setup
 
-# 2) Put source files in:
+# 2) (Optional) Pull fresh raw data with the bundled downloader
+#    .venv/bin/zeus download cnpj --month 2025-09 -n 1
+#    .venv/bin/zeus download cvm --doc itr -n 1
+#    # Files land in data/raw/cnpj and data/raw/cvm respectively
+# 3) Or drop your own source files in:
 #    data/raw/cnpj/   (Receita CNPJ files)
 #    data/raw/cvm/    (CVM ITR/DFP zips/XBRL)
-# 3) Run the pipeline stages
+# 4) Run the pipeline stages
 make bronze    # discover & unpack to bronze
 make silver    # clean & normalize to silver
 make load      # load into SQLite
@@ -41,6 +45,8 @@ zeus ingest cvm --to bronze
 zeus normalize cnpj
 zeus normalize cvm
 zeus load sqlite
+zeus download cnpj --month 2025-09
+zeus download cvm --doc dfp
 ```
 
 ## What works in this prototype?
