@@ -142,10 +142,21 @@ def _filter_by_patterns(files: Sequence[str], patterns: Sequence[str] | None, li
 def _download_many(base_url: str, filenames: Iterable[str], dest_dir: Path, overwrite: bool) -> None:
     for name in filenames:
         dest = dest_dir / name
-        if dest.exists() and not overwrite:
-            echo(f"[FETCH] Skipping existing file {dest}")
-            continue
         url = urljoin(base_url, name)
+        if dest.exists() and not overwrite:
+            remote_size = _remote_file_size(url)
+            local_size = dest.stat().st_size
+            if remote_size is not None and local_size == remote_size:
+                echo(f"[FETCH] Skipping existing file {dest}")
+                continue
+            remote_size_text = (
+                f"remote size {remote_size}"
+                if remote_size is not None
+                else "remote size unknown"
+            )
+            echo(
+                f"[FETCH] Re-downloading {dest} because local size {local_size} does not match {remote_size_text}"
+            )
         echo(f"[FETCH] GET {url}")
         _download_file(url, dest)
 
@@ -165,3 +176,19 @@ def _download_file(url: str, dest: Path) -> None:
                     continue
                 fh.write(chunk)
                 bar.update(len(chunk))
+
+
+def _remote_file_size(url: str) -> int | None:
+    """Return the remote file size from Content-Length header when available."""
+    try:
+        resp = requests.head(url, timeout=DEFAULT_TIMEOUT, allow_redirects=True)
+        resp.raise_for_status()
+    except requests.RequestException:
+        return None
+
+    length = resp.headers.get("content-length")
+    try:
+        size = int(length) if length is not None else None
+    except (TypeError, ValueError):
+        return None
+    return size if size is not None and size >= 0 else None
